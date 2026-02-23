@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Studio · Design Any QR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712;
+            --panel: #0f172a;
+            --panel-soft: #182032;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-strong: #0ea5e9;
+            --border: rgba(148, 163, 184, 0.25);
+            --shadow: 0 30px 80px rgba(2, 6, 23, 0.65);
+        }
+
+        body.light {
+            --bg: #f8fafc;
+            --panel: #ffffff;
+            --panel-soft: #e2e8f0;
+            --text: #0f172a;
+            --muted: #475569;
+            --accent: #6366f1;
+            --accent-strong: #4f46e5;
+            --border: rgba(15, 23, 42, 0.15);
+            --shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .app {
+            width: min(1120px, 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(28px, 4vw, 40px);
+            margin: 0;
+        }
+
+        header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .toggle {
+            background: var(--panel);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        label span {
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .input {
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--panel-soft);
+            padding: 14px 18px;
+            color: var(--text);
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .input:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .chip {
+            border-radius: 999px;
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .design-section {
+            margin-top: 24px;
+        }
+
+        .design-section h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .design-section p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .design-card {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--panel-soft);
+            padding: 14px;
+            text-align: left;
+            cursor: pointer;
+            transition: border 0.2s ease, transform 0.15s ease;
+        }
+
+        .design-card.active {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .design-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .swatches {
+            display: flex;
+            margin-top: 10px;
+            gap: 6px;
+        }
+
+        .swatch {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .custom-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .custom-control input[type="color"] {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .custom-control input[type="range"] {
+            width: 100%;
+        }
+
+        .value-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button.primary,
+        button.secondary {
+            flex: 1;
+            min-width: 140px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 14px 18px;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: linear-gradient(120deg, var(--accent-strong), var(--accent));
+            color: #041420;
+        }
+
+        button.secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--panel-soft);
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .status.active {
+            color: var(--accent);
+        }
+
+        .status.error {
+            color: #f87171;
+        }
+
+        .preview {
+            min-height: 320px;
+            border-radius: 20px;
+            background: #000;
+            border: 1px dashed rgba(148, 163, 184, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .preview img {
+            max-width: 260px;
+            width: 100%;
+            background: #fff;
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .preview-placeholder span {
+            display: block;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .info {
+            margin-top: 18px;
+            font-size: 0.95rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="dark">
+<div class="app">
+    <header>
+        <div>
+            <h1>QR Studio</h1>
+            <p>Paste a link, pick a style, generate, preview, and download.</p>
+        </div>
+        <button id="modeToggle" class="toggle">☀️ Light mode</button>
+    </header>
+
+    <div class="workspace">
+        <section class="panel">
+            <label for="linkInput">
+                Destination link
+                <span>example: https://brand.com/go</span>
+            </label>
+            <input id="linkInput" class="input" type="text" placeholder="https://brand.com/live-event">
+
+            <div class="examples">
+                <button class="chip" onclick="useExample('https://studioqr.com/events/rsvp')">RSVP</button>
+                <button class="chip" onclick="useExample('https://menu.cafe/seasonal')">Menu</button>
+                <button class="chip" onclick="useExample('https://support.brand.com/guide')">Guide</button>
+                <button class="chip" onclick="useExample('https://forms.office.com/r/feedback')">Feedback</button>
+            </div>
+
+            <div class="design-section">
+                <h3>Design presets</h3>
+                <p>Select a palette or fine-tune colors, module size, and border to fit any brand system.</p>
+                <div class="design-grid">
+                    <button class="design-card active" data-style="classic">
+                        <div class="design-name">Classic Mono</div>
+                        <div class="swatches">
+                            <span class="swatch" style="background:#111111;"></span>
+                            <span class="swatch" style="background:#ffffff;"></span>
+                        </div>
+                    </button>
+                    <button class="design-card" data-style="midnight">
+                        <div class="design-name">Midnight Neon</div>
+                        <div class="swatches">
+                            <span class="swatch" style="background:#a5f3fc;"></span>
+                            <span class="swatch" style="background:#030712;"></span>
+                        </div>
+                    </button>
+                    <button class="design-card" data-style="sunset">
+                        <div class="design-name">Sunset Pulse</div>
+                        <div class="swatches">
+                            <span class="swatch" style="background:#fb923c;"></span>
+                            <span class="swatch" style="background:#111827;"></span>
+                        </div>
+                    </button>
+                    <button class="design-card" data-style="mint">
+                        <div class="design-name">Mint Canvas</div>
+                        <div class="swatches">
+                            <span class="swatch" style="background:#064e3b;"></span>
+                            <span class="swatch" style="background:#ecfccb;"></span>
+                        </div>
+                    </button>
+                    <button class="design-card" data-style="ember">
+                        <div class="design-name">Ember Glow</div>
+                        <div class="swatches">
+                            <span class="swatch" style="background:#fbbf24;"></span>
+                            <span class="swatch" style="background:#1f2937;"></span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="custom-controls">
+                    <div class="custom-control">
+                        <span>Module color</span>
+                        <input type="color" id="fillColor">
+                    </div>
+                    <div class="custom-control">
+                        <span>Background color</span>
+                        <input type="color" id="backgroundColor">
+                    </div>
+                    <div class="custom-control">
+                        <span>Module size <span id="boxSizeValue" class="value-label">10</span></span>
+                        <input type="range" id="boxSize" min="4" max="20" value="10">
+                    </div>
+                    <div class="custom-control">
+                        <span>Border width <span id="borderSizeValue" class="value-label">4</span></span>
+                        <input type="range" id="borderSize" min="1" max="10" value="4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="primary" id="generateBtn" onclick="generateQR()">Generate</button>
+                <button class="secondary" id="downloadBtn" onclick="downloadQR()" disabled>Download PNG</button>
+            </div>
+
+            <div id="status" class="status">Pick a preset or set your own colors, then generate.</div>
+        </section>
+
+        <section class="panel">
+            <h2>Live preview</h2>
+            <div id="qrPreview" class="preview">
+                <div class="preview-placeholder">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="6" width="52" height="52" rx="10" stroke="rgba(255,255,255,0.3)" stroke-width="4" stroke-dasharray="10 8"/>
+                        <path d="M21 21H27V27H21V21Z" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M37 37H43V43H37V37Z" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M21 37H30V43H21V37Z" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M37 21H43V30H37V21Z" fill="rgba(255,255,255,0.3)"/>
+                    </svg>
+                    <span>Preview appears here</span>
+                </div>
+            </div>
+            <div class="info">
+                Exported PNG files are timestamped automatically. Use light presets when printing on dark surfaces and vice versa for maximum contrast.
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    const body = document.body;
+    const modeToggle = document.getElementById('modeToggle');
+    const statusBar = document.getElementById('status');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const linkInput = document.getElementById('linkInput');
+
+    const designPresets = {
+        classic: { label: 'Classic Mono', fillColor: '#111111', backgroundColor: '#ffffff', boxSize: 10, border: 4 },
+        midnight: { label: 'Midnight Neon', fillColor: '#a5f3fc', backgroundColor: '#030712', boxSize: 10, border: 4 },
+        sunset: { label: 'Sunset Pulse', fillColor: '#fb923c', backgroundColor: '#111827', boxSize: 11, border: 4 },
+        mint: { label: 'Mint Canvas', fillColor: '#064e3b', backgroundColor: '#ecfccb', boxSize: 9, border: 5 },
+        ember: { label: 'Ember Glow', fillColor: '#fbbf24', backgroundColor: '#1f2937', boxSize: 12, border: 4 }
+    };
+
+    let currentStyle = { ...designPresets.classic };
+    let selectedPreset = 'classic';
+
+    const fillInput = document.getElementById('fillColor');
+    const backgroundInput = document.getElementById('backgroundColor');
+    const boxSizeInput = document.getElementById('boxSize');
+    const borderInput = document.getElementById('borderSize');
+    const boxSizeValue = document.getElementById('boxSizeValue');
+    const borderSizeValue = document.getElementById('borderSizeValue');
+    const designCards = document.querySelectorAll('.design-card');
+
+    modeToggle.addEventListener('click', () => {
+        const isLight = body.classList.toggle('light');
+        modeToggle.textContent = isLight ? '🌙 Dark mode' : '☀️ Light mode';
+    });
+
+    designCards.forEach(card => {
+        card.addEventListener('click', () => setPreset(card.dataset.style));
+    });
+
+    fillInput.addEventListener('input', () => updateCustomStyle({ fillColor: fillInput.value }));
+    backgroundInput.addEventListener('input', () => updateCustomStyle({ backgroundColor: backgroundInput.value }));
+    boxSizeInput.addEventListener('input', () => {
+        boxSizeValue.textContent = boxSizeInput.value;
+        updateCustomStyle({ boxSize: Number(boxSizeInput.value) });
+    });
+    borderInput.addEventListener('input', () => {
+        borderSizeValue.textContent = borderInput.value;
+        updateCustomStyle({ border: Number(borderInput.value) });
+    });
+
+    function setPreset(key) {
+        if (!designPresets[key]) return;
+        selectedPreset = key;
+        currentStyle = { ...designPresets[key] };
+        syncCustomInputs();
+        designCards.forEach(card => card.classList.toggle('active', card.dataset.style === key));
+        setStatus(`"${designPresets[key].label}" palette loaded. Generate to preview.`, 'active');
+    }
+
+    function syncCustomInputs() {
+        fillInput.value = currentStyle.fillColor;
+        backgroundInput.value = currentStyle.backgroundColor;
+        boxSizeInput.value = currentStyle.boxSize;
+        borderInput.value = currentStyle.border;
+        boxSizeValue.textContent = currentStyle.boxSize;
+        borderSizeValue.textContent = currentStyle.border;
+    }
+
+    function updateCustomStyle(partial) {
+        currentStyle = { ...currentStyle, ...partial };
+        selectedPreset = null;
+        designCards.forEach(card => card.classList.remove('active'));
+    }
+
+    function setStatus(message, variant = '') {
+        statusBar.textContent = message;
+        statusBar.className = `status ${variant}`.trim();
+    }
+
+    function useExample(link) {
+        linkInput.value = link;
+        setStatus('Example pasted. Tap generate to render it.', 'active');
+        generateQR();
+    }
+
+    function payload(link) {
+        return {
+            link,
+            style: {
+                fillColor: currentStyle.fillColor,
+                backgroundColor: currentStyle.backgroundColor,
+                boxSize: currentStyle.boxSize,
+                border: currentStyle.border,
+            },
+        };
+    }
+
+    async function generateQR() {
+        const link = linkInput.value.trim();
+        if (!link) {
+            setStatus('Please enter a link or text first.', 'error');
+            return;
+        }
+
+        setStatus('Generating preview…', 'active');
+        generateBtn.disabled = true;
+
+        try {
+            const response = await fetch('/generate-preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload(link))
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('qrPreview').innerHTML = `<img src="${data.image}" alt="QR code preview">`;
+                downloadBtn.disabled = false;
+                setStatus('Preview ready. Scan it to test, then download.', 'active');
+            } else {
+                setStatus(data.error || 'Unable to generate QR code.', 'error');
+            }
+        } catch (error) {
+            setStatus('Network error. Please try again.', 'error');
+        } finally {
+            generateBtn.disabled = false;
+        }
+    }
+
+    async function downloadQR() {
+        const link = linkInput.value.trim();
+        if (!link) {
+            setStatus('Need a link before downloading.', 'error');
+            return;
+        }
+
+        setStatus('Preparing PNG download…', 'active');
+        downloadBtn.disabled = true;
+
+        try {
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload(link))
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `qr_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                setStatus('PNG downloaded successfully.', 'active');
+            } else {
+                setStatus('Error downloading QR code.', 'error');
+            }
+        } catch (error) {
+            setStatus('Network error. Please try again.', 'error');
+        } finally {
+            downloadBtn.disabled = false;
+        }
+    }
+
+    // Initialize controls with default preset
+    setPreset('classic');
+</script>
+</body>
+</html>
+
