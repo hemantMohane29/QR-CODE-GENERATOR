@@ -1,4 +1,4 @@
-# 🎨 QR Studio - Professional QR Code Generator
+  # 🎨 QR Studio - Professional QR Code Generator
 
 A modern, feature-rich web application for generating customizable QR codes with real-time preview and professional design presets. Built with Flask and Python, featuring a beautiful dark/light mode interface.
 
@@ -35,11 +35,7 @@ A modern, feature-rich web application for generating customizable QR codes with
 
 ## 🚀 Demo
 
-[Live Demo](#) <!-- Add your deployment link here -->
-
-## 📸 Screenshots
-
-<!-- Add screenshots of your application here -->
+[Live Demo](https://web-production-5453d.up.railway.app/) 
 
 ## 🛠️ Tech Stack
 
@@ -184,32 +180,6 @@ Generates and downloads a QR code as PNG file with timestamp.
 **Filename Format**: `qr_YYYYMMDD_HHMMSS.png`
 
 ## 🚀 Deployment
-
-### Deploy to Render
-
-1. Fork this repository
-2. Create a new Web Service on [Render](https://render.com)
-3. Connect your GitHub repository
-4. Render will automatically detect `Procfile` and `runtime.txt`
-5. Click "Create Web Service"
-6. Your app will be live at `https://your-app.onrender.com`
-
-### Deploy to Heroku
-
-```bash
-# Login to Heroku
-heroku login
-
-# Create new app
-heroku create your-qr-generator
-
-# Push to Heroku
-git push heroku master
-
-# Open your app
-heroku open
-```
-
 ### Deploy to Railway
 
 1. Connect your GitHub repository to [Railway](https://railway.app)
@@ -248,7 +218,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Hemant Mohane**
 
 - GitHub: [@hemantMohane29](https://github.com/hemantMohane29)
-- LinkedIn: [Connect with me](#) <!-- Add your LinkedIn URL -->
+- LinkedIn: [Connect with me]( https://www.linkedin.com/in/hemant-mohane-35440a330/ )
 
 ## 🙏 Acknowledgments
 
@@ -256,12 +226,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Flask](https://flask.palletsprojects.com/) - Lightweight web framework
 - [Pillow](https://python-pillow.org/) - Python Imaging Library
 - [Google Fonts](https://fonts.google.com/) - Space Grotesk & Inter fonts
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-- Open an issue on [GitHub Issues](https://github.com/hemantMohane29/QR-CODE-GENERATOR/issues)
-- Contact me via LinkedIn
 
 ## 🔮 Future Enhancements
 
